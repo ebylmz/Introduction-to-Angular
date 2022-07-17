@@ -12,8 +12,8 @@
           </li>
        </ul>
        <form class="form-inline my-2 my-lg-0">
-          <input type="search" #key="ngModel" ngModel
-           name="key" id="searchName" class="form-control mr-sm-2" placeholder="Search employees..." required>
+          <input type="search" #key="ngModel" (ngModelChange)="searchEmployees(key.value)" ngModel
+            name="key" id="searchName" class="form-control mr-sm-2" placeholder="Search employees..." required>
        </form>
     </div>
   </nav>
@@ -37,6 +37,7 @@
                 </ul>
                 <div class="card-body">
                     <div class="float-right btn-group btn-group-sm">
+                        <!-- editEmployee abd deleteEmployee is setting by the onOpenModal function -->
                         <a href="#" (click)="onOpenModal(employee, 'edit')" class="btn btn-primary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
                         <a href="#" (click)="onOpenModal(employee, 'delete')" class="btn btn-secondary tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete"><i class="fa fa-times"></i></a>
                     </div>
@@ -68,12 +69,16 @@
          <div class="modal-header">
             <h5 class="modal-title" id="addEmployeeModalLabel">Add Employee</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">&times;</span>
             </button>
          </div>
          <div class="modal-body">
-            <!-- <form #addForm="ngForm" (ngSubmit)="onAddEmloyee(addForm)"> -->
-            <form>
+            <!-- Dynamic Local Template Reference are used to view or save the HTML element 
+                 data where we can fetch the data from the component template and pass 
+                 it to the component typescript class -->
+            <!-- when this form submit, onAddEmployee function executes via the local reference #addForm -->
+            <form #addForm="ngForm" (ngSubmit)="onAddEmployee(addForm)">
+                <!-- name is the key, input is the value for the form -->
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" ngModel name="name" class="form-control" id="name" placeholder="Name" required>
@@ -88,16 +93,17 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <input type="text" ngModel name="phone" class="form-control" id="phone" placeholder="Phone" required>
+                    <input type="text" ngModel name="phoneNumber" class="form-control" id="phoneNumber" placeholder="Phone" required>
                 </div>
                 <div class="form-group">
                     <label for="phone">Image URL</label>
                     <input type="text" ngModel name="imageUrl" class="form-control" id="imageUrl" placeholder="Image URL" required>
                 </div>
                 <div class="modal-footer">
+                    <!-- data-dismiss for closing the button -->
                     <button type="button" id="add-employee-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button> -->
-                    <button type="submit" class="btn btn-primary" >Save changes</button>
+                    <!-- type of the button must be "submit" in order to submit the form -->
+                    <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
                 </div>
             </form>
          </div>
@@ -119,7 +125,7 @@
             <form #editForm="ngForm">
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" ngModel="{{editEmployee?.name}}" name="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Name">
+                    <input type="text" ngModel="{{editEmployee?.name}}" name="name" class="form-control" id="name" placeholder="Name">
                 </div>
                     <input type="hidden" ngModel="{{editEmployee?.id}}" name="id" class="form-control" id="id" placeholder="Email">
                     <input type="hidden" ngModel="{{editEmployee?.employeeCode}}" name="userCode" class="form-control" id="userCode" placeholder="Email">
@@ -133,7 +139,7 @@
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <input type="text" ngModel="{{editEmployee?.phoneNumber}}" name="phone" class="form-control" id="phone" name="phone" placeholder="Phone">
+                    <input type="text" ngModel="{{editEmployee?.phoneNumber}}" name="phoneNumber" class="form-control" id="phoneNumber" placeholder="Phone">
                 </div>
                 <div class="form-group">
                     <label for="phone">Image URL</label>
@@ -141,7 +147,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
-                    <button data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+                    <button (click)="onEditEmployee(editForm.value)" data-dismiss="modal" class="btn btn-primary">Save changes</button>
                 </div>
             </form>
           </div>
@@ -156,14 +162,14 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModelLabel">Delete Employee</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
+                  <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete employee {{deleteEmployee?.name}}?</p>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <button data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    <button (click)="onDeleteEmployee(deleteEmployee?.id)" data-dismiss="modal">Yes</button>
                 </div>
             </div>
         </div>
